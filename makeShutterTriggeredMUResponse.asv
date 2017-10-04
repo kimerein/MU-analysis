@@ -1,6 +1,8 @@
 function makeShutterTriggeredMUResponse(filedir,shuttertimes)
 
-groupChs={[33 35 36 46 51 52 53]; [34 37 38 39 40 41 42 43 44 45 47 48 49 50 54 55 56 57 58 59 60 61 62 63 64]}; % how to sort channels into groups
+shuttertimes=shuttertimes(shuttertimes>
+
+groupChs={[35 36 46 53]; [33 34 37 38 39 40 41 42 43 44 45 47 48 49 50 51 52 54 55 56 57 58 59 60 61 62 63 64]}; % how to sort channels into groups
 groupNames={'Driven', 'Suppressed'}; % names of groups, corresponds to elements in groupChs
 ch='ch'; % string that indicates files containing spike channel MU data
 timeWindowBefore=1; % baseline window before opto stim in sec
@@ -27,22 +29,18 @@ for i=1:length(listing)
         chNums=[chNums chNum];
         a=load([filedir '\' curr.name]);
         binEdges=a.out.binEdges;
-        inGroup=0;
         for j=1:length(groupChs)
             if ismember(chNum,groupChs{j})
-                inGroup=1;
                 break
             end
         end
-        if inGroup==0 % discard this ch
+        if j>length(groupChs) % discard this ch
         else
             allspiketimes{j}=[allspiketimes{j} a.spiketimes];
         end
     end
 end
         
-shuttertimes=shuttertimes(shuttertimes>binEdges(1) & shuttertimes<binEdges(end));
-
 % Make shutter-triggered response
 for i=1:length(allspiketimes)
     [histo(i).counts,histo(i).binEdges]=histcounts(allspiketimes{i},binEdges);
