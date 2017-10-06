@@ -1,45 +1,65 @@
-function makeShutterTriggeredMUResponse(filedir,shuttertimes)
+function out=makeShutterTriggeredMUResponse(filedir,shuttertimes,useThresh)
 
-groupChs={[33 35 36 46 51 52 53]; [34 37 38 39 40 41 42 43 44 45 47 48 49 50 54 55 56 57 58 59 60 61 62 63 64]}; % how to sort channels into groups
+% groupChs={[33 35 36 46 51 52 53]; [34 38 40 41 42 43 44 45 49 50 54 55 56 59 60]}; % how to sort channels into groups
+groupChs={[35 36 46 53]; [41 42 44 45 47 48 49 54 55 57]}; % how to sort channels into groups
+% [34 37 38 39 40 41 42 43 44 45 47 48 49 50 54 55 56 57 58 59 60 61 62 63 64]
 groupNames={'Driven', 'Suppressed'}; % names of groups, corresponds to elements in groupChs
 ch='ch'; % string that indicates files containing spike channel MU data
 timeWindowBefore=1; % baseline window before opto stim in sec
 timeWindowAfter=3; % window after opto stim in sec
-
+binsize=0.03; % in seconds
+normByNumChs=1; % if 1, will divide through by number of channels in group
 
 % Load spikes from different channels
-listing=dir(filedir);
-chNums=[];
-binEdges=[];
-allspiketimes={};
-for i=1:length(groupChs)
-    allspiketimes{i}=[];
+if ~iscell(filedir)
+    temp{1}=filedir;
+    filedir=temp;
 end
-for i=1:length(listing)
-    curr=listing(i);
-    firstInd=regexp(curr.name,ch);
-    matInd=regexp(curr.name,'.mat');
-    if ~isempty(matInd) && ~isempty(firstInd)
-        % is .mat file and contains ch
-        chIDstart=firstInd+length(ch);
-        chIDend=matInd-1;
-        chNum=str2num(curr.name(chIDstart:chIDend));
-        chNums=[chNums chNum];
-        a=load([filedir '\' curr.name]);
-        binEdges=a.out.binEdges;
-        inGroup=0;
-        for j=1:length(groupChs)
-            if ismember(chNum,groupChs{j})
-                inGroup=1;
-                break
-            end
-        end
-        if inGroup==0 % discard this ch
-        else
-            allspiketimes{j}=[allspiketimes{j} a.spiketimes];
+binEdges=[];
+for k=1:length(filedir)
+    listing=dir(filedir{k});
+    if k==1
+        chNums=[];
+        binEdges=[];
+        allspiketimes={};
+        for i=1:length(groupChs)
+            allspiketimes{i}=[];
         end
     end
+    for i=1:length(listing)
+        curr=listing(i);
+        firstInd=regexp(curr.name,ch);
+        matInd=regexp(curr.name,'.mat');
+        if ~isempty(matInd) && ~isempty(firstInd)
+            % is .mat file and contains ch
+            chIDstart=firstInd+length(ch);
+            chIDend=matInd-1;
+            chNum=str2num(curr.name(chIDstart:chIDend));
+            chNums=[chNums chNum];
+            a=load([filedir{k} '\' curr.name]);
+            currBinEdges=a.out.binEdges;
+            if ~isempty(useThresh)
+                if isfield(a,'spikeamps')
+                    a.spiketimes=a.spiketimes(a.spikeamps>-useThresh);
+                end
+            end
+            inGroup=0;
+            for j=1:length(groupChs)
+                if ismember(chNum,groupChs{j})
+                    inGroup=1;
+                    break
+                end
+            end
+            if inGroup==0 % discard this ch
+            else
+                allspiketimes{j}=[allspiketimes{j} a.spiketimes];
+            end
+        end
+    end
+    binEdges=[binEdges currBinEdges];
 end
+binEdges=sort(unique(binEdges));
+binEdges=min(binEdges):binsize:max(binEdges);
         
 shuttertimes=shuttertimes(shuttertimes>binEdges(1) & shuttertimes<binEdges(end));
 
@@ -79,7 +99,17 @@ colorCycle={'k','r','b','m','g','y','c'};
 figure();
 for i=1:length(trialResponse)
     colorInd=mod(i,length(colorCycle));
-    plot(linspace(-timeWindowBefore,timeWindowAfter,size(trialResponse{i},2)),nanmean(trialResponse{i},1),'Color',colorCycle{colorInd});
+    if normByNumChs==1
+        x(i,:)=linspace(-timeWindowBefore,timeWindowAfter,size(trialResponse{i},2));
+        y(i,:)=nanmean(trialResponse{i},1)./length(groupChs{i});
+    else
+        x(i,:)=linspace(-timeWindowBefore,timeWindowAfter,size(trialResponse{i},2));
+        y(i,:)=nanmean(trialResponse{i},1);
+    end
+    plot(x(i,:),y(i,:),'Color',colorCycle{colorInd});
     hold on;
 end
-legend(groupNames); 
+legend(groupNames);
+
+out.x=x;
+out.y=y;
