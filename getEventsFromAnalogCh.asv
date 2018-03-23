@@ -1,0 +1,15 @@
+function getEventsFromAnalogCh(filename,chName)
+
+indFile=regexp(filename,'\');
+filedirname=filename(1:indFile(end));
+
+disp('Reading data from file');
+[data]=PL2Ad(filename,chName);
+disp('Finding events');
+
+
+
+save([filedirname num2str(chName) '.mat'],'out','spiketimes','spikeamps');
+close all;
+
+function 

@@ -1,12 +1,16 @@
 function out=makeShutterTriggeredMUResponse(filedir,shuttertimes,useThresh)
 
 % groupChs={[33 35 36 46 51 52 53]; [34 38 40 41 42 43 44 45 49 50 54 55 56 59 60]}; % how to sort channels into groups
-groupChs={[35 36 46 53]; [41 42 44 45 47 48 49 54 55 57]}; % how to sort channels into groups
+% groupChs={[35 36 46 53]; [41 42 44 45 47 48 49 54 55 57]}; % how to sort channels into groups
 % [34 37 38 39 40 41 42 43 44 45 47 48 49 50 54 55 56 57 58 59 60 61 62 63 64]
+
+groupChs={[16 17 18 19 20 22 24]; [1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 21 23 25 26 27 28 29 30 31 32]}; % how to sort channels into groups
+
 groupNames={'Driven', 'Suppressed'}; % names of groups, corresponds to elements in groupChs
-ch='ch'; % string that indicates files containing spike channel MU data
+% ch='ch'; % string that indicates files containing spike channel MU data
+ch='WB'; % string that indicates files containing spike channel MU data
 timeWindowBefore=1; % baseline window before opto stim in sec
-timeWindowAfter=3; % window after opto stim in sec
+timeWindowAfter=5; % window after opto stim in sec
 binsize=0.03; % in seconds
 normByNumChs=1; % if 1, will divide through by number of channels in group
 
