@@ -1,0 +1,9 @@
+function convertContinuousToTrialStructure(spikes,trialStartTimes,isLEDtrial,cueRelativeToTrialStart)
+
+whichTrialStart=nan(1,length(spikes.spiketimes));
+for i=1:length(trialStartTimes)
+    temp=spikes.spiketimes-trialStartTimes(i);
+    whichTrialStart(temp>=0
+    
+    
+[~,whichTrialStart]=min(spikes.spiketimes-trialStartTimes;
