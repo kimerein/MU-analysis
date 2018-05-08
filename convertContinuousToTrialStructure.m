@@ -17,4 +17,5 @@ spikes.info.cue_thisManyS_beforeTrialOnset=cueRelativeToTrialStart;
 
 spikes.sweeps.trials=temp;
 spikes.sweeps.led=single(isLEDtrial);
-spikes.sweeps.trialDuration=[trialStartTimes(2:end)-trialStartTimes(1:end-1) max(spikes.spiketimes)-trialStartTimes(end)];
+% note that we don't actually know last trial duration
+spikes.sweeps.trialDuration=[trialStartTimes(2:end)-trialStartTimes(1:end-1) nan];
