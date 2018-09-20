@@ -1,4 +1,4 @@
-function [spikes,cuetimes,optotimes,opto_trials]=convertToTrialByTrial_wrapper(spikes,filename,cueChName,optoChName)
+function [spikes,cuetimes,optotimes]=convertToTrialByTrial_wrapper(spikes,filename,cueChName,optoChName)
 
 % Note that spikes before first trial will be discarded!
 
@@ -11,7 +11,7 @@ optotimes=getEventsFromAnalogCh(filename,optoChName);
 noopto_trials=ismember(cuetimes,noopto_cuetimes);
 opto_trials=ismember(cuetimes,opto_cuetimes);
 disp('this many noopto trials');
-disp(sum(noopto_trials));
+disp(sum(noopto_cuetimes));
 disp('this many opto trials');
 disp(sum(opto_trials));
 
