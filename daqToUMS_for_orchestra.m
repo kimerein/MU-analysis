@@ -1,5 +1,11 @@
 % function daqToUMS_for_orchestra()
 
+addpath(genpath('daq_to_UMS_code'));
+addpath(genpath('UltraMegaSort'));
+addpath(genpath('Scanziani_Analysis_Code'));
+
+cd('daq_data');
+
 a=load('detectfilenames.mat');
 detectfilenames=a.detectfilenames;
 
