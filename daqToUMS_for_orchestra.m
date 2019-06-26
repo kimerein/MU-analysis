@@ -98,14 +98,20 @@ for i=1:length(doTrodes)
         
         % Save
         SaveAssignStructs(spikes);
+        disp(['Saved T' num2str(i) ' spikes after detection']);
     end
     
     % Cluster
     spikes = ss_align(spikes);
+    disp(['T' num2str(i) ' spikes align']);
     spikes = ss_kmeans(spikes);
+    disp(['T' num2str(i) ' spikes kmeans']);
     spikes = ss_energy(spikes);
+    disp(['T' num2str(i) ' spikes energy']);
     spikes = ss_aggregate(spikes);
+    disp(['T' num2str(i) ' spikes aggregated']);
     
     % Save
     SaveAssignStructs(spikes);
+    disp(['Saved T' num2str(i) ' spikes after clustering']);
 end
