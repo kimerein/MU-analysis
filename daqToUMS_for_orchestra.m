@@ -16,8 +16,8 @@ a=load('expt.mat');
 expt=a.expt;
 
 detectFiles=1:length(detectfilenames);
-for i=1:length(doTrodes)
-    channels=doTrodes{i};
+for itrode=1:length(doTrodes)
+    channels=doTrodes{itrode};
     
     chStr = [];
     for j = 1:length(channels)
@@ -25,7 +25,7 @@ for i=1:length(doTrodes)
         chStr = [chStr '_' temp];
     end
     fName = getFilename(expt.name);
-    fName = [fName '_T' num2str(i) '_Ch' chStr '_S1' '_spikes'];
+    fName = [fName '_T' num2str(itrode) '_Ch' chStr '_S1' '_spikes'];
     
     % Make new default spikes struct
     Fs = expt.files.Fs(1);
@@ -94,24 +94,24 @@ for i=1:length(doTrodes)
         
         % Set additional information in spikes struct
         spikes.info.exptfile = expt.info.exptfile;
-        spikes.info.trodeInd = i;
+        spikes.info.trodeInd = itrode;
         
         % Save
         SaveAssignStructs(spikes);
-        disp(['Saved T' num2str(i) ' spikes after detection']);
+        disp(['Saved T' num2str(itrode) ' spikes after detection']);
     end
     
     % Cluster
     spikes = ss_align(spikes);
-    disp(['T' num2str(i) ' spikes align']);
+    disp(['T' num2str(itrode) ' spikes align']);
     spikes = ss_kmeans(spikes);
-    disp(['T' num2str(i) ' spikes kmeans']);
+    disp(['T' num2str(itrode) ' spikes kmeans']);
     spikes = ss_energy(spikes);
-    disp(['T' num2str(i) ' spikes energy']);
+    disp(['T' num2str(itrode) ' spikes energy']);
     spikes = ss_aggregate(spikes);
-    disp(['T' num2str(i) ' spikes aggregated']);
+    disp(['T' num2str(itrode) ' spikes aggregated']);
     
     % Save
     SaveAssignStructs(spikes);
-    disp(['Saved T' num2str(i) ' spikes after clustering']);
+    disp(['Saved T' num2str(itrode) ' spikes after clustering']);
 end
