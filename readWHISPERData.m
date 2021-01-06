@@ -3,12 +3,13 @@ function readWHISPERData(binName, path, chList, chSaveNames)
 % trode list is cell array of vectors giving channels in each trode
 
 disp('Reading data from file');
+disp(binName);
 
 % Parse the corresponding metafile
 meta = ReadMeta(binName, path);
 
 % Get all data
-nSamp = floor(60.0 * SampRate(meta)); % first one sec only
+nSamp = floor(3*60.0 * SampRate(meta)); % first one sec only
 % nSamp = floor(str2double(meta.fileTimeSecs) * SampRate(meta));
 dataArray = ReadBin(0, nSamp, meta, binName, path);
 
