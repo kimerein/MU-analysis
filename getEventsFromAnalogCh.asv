@@ -26,7 +26,7 @@ disp('Finding events');
 times=0:(1/data.ADFreq):(1/data.ADFreq)*(length(data.Values)-1);
 f=findEvents(data.Values,times);
 eventtimes=times(f);
-%save([filedirname chName '.mat'],'eventtimes');
+save([filedirname chName '.mat'],'eventtimes');
 
 end
 
@@ -36,9 +36,7 @@ askUser=true;
 thresh=100;
 figure(); 
 plot(times,data,'Color','k');
-if askUser==true
-    thresh=input('Threshold: ');
-end
+
 hold on;
 line([1 max(times)],[thresh thresh],'Color','r');
 
