@@ -1,7 +1,9 @@
-function eventtimes=getEventsFromAnalogCh(filename,chName)
+function [eventtimes,threshData,data]=getEventsFromAnalogCh(filename,chName)
 
 indFile=regexp(filename,'\');
 filedirname=filename(1:indFile(end));
+
+data=[];
 
 if ~isempty(regexp(chName,'AI','once'))
     % assumes this is from a Plexon recording system
@@ -24,13 +26,15 @@ elseif ~isempty(regexp(chName,'auxData','once'))
 end
 disp('Finding events');
 times=0:(1/data.ADFreq):(1/data.ADFreq)*(length(data.Values)-1);
-f=findEvents(data.Values,times);
+[f,isOn]=findEvents(data.Values,times);
+threshData.Values=isOn;
+threshData.ADFreq=data.ADFreq;
 eventtimes=times(f);
 %save([filedirname chName '.mat'],'eventtimes');
 
 end
 
-function f=findEvents(data,times)
+function [f,isOn]=findEvents(data,times)
 
 askUser=true;
 thresh=100;
