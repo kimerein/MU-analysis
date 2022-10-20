@@ -39,10 +39,7 @@ function [f,isOn]=findEvents(data,times)
 askUser=true;
 thresh=100;
 figure(); 
-subplot(2,1,1);
 plot(times,data,'Color','k');
-subplot(2,1,2);
-plot(times(times<500),data(times<500),'Color','k');
 if askUser==true
     thresh=input('Threshold: ');
 end
