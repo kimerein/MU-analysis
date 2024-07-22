@@ -1,4 +1,16 @@
-function [eventtimes,threshData,data]=getEventsFromAnalogCh(filename,chName)
+function [eventtimes,threshData,data,answerout]=getEventsFromAnalogCh(varargin)
+
+if length(varargin)==2
+    filename=varargin{1};
+    chName=varargin{2};
+    answer=nan;
+elseif length(varargin)==3
+    filename=varargin{1};
+    chName=varargin{2};
+    answer=varargin{3};
+else
+    error('Wrong number of arguments passed to getEventsFromAnalogCh.m');
+end
 
 indFile=regexp(filename,'\');
 filedirname=filename(1:indFile(end));
@@ -26,7 +38,7 @@ elseif ~isempty(regexp(chName,'auxData','once'))
 end
 disp('Finding events');
 times=0:(1/data.ADFreq):(1/data.ADFreq)*(length(data.Values)-1);
-[f,isOn]=findEvents(data.Values,times);
+[f,isOn,answerout]=findEvents(data.Values,times,answer);
 threshData.Values=isOn;
 threshData.ADFreq=data.ADFreq;
 eventtimes=times(f);
@@ -34,7 +46,7 @@ eventtimes=times(f);
 
 end
 
-function [f,isOn]=findEvents(data,times)
+function [f,isOn,answerout]=findEvents(data,times,answer)
 
 askUser=true;
 thresh=100;
@@ -44,14 +56,26 @@ plot(times,data,'Color','k');
 subplot(2,1,2);
 plot(times(times<500),data(times<500),'Color','k');
 if askUser==true
-    thresh=input('Threshold: ');
+    if ~isnan(answer)
+        thresh=answer(1);
+        answerout(1)=thresh;
+    else
+        thresh=input('Threshold: ');
+        answerout(1)=thresh;
+    end
 end
 hold on;
 line([1 max(times)],[thresh thresh],'Color','r');
 
 % May need to exclude end
 % Ask user
-timecut=input('Exclude cues after this time (x axis in seconds): ');
+if ~isnan(answer)
+    timecut=answer(2);
+    answerout(2)=thresh;
+else
+    timecut=input('Exclude cues after this time (x axis in seconds): ');
+    answerout(2)=thresh;
+end
 data=data(times<timecut);
 
 isOn=data>thresh;
